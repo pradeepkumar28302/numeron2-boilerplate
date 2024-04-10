@@ -1,93 +1,90 @@
-// Iteration 2: Generating two random numbers (0 to 100) and displaying the same in the game.html
-
-const num1 = document.getElementById("number1")
-const num2 = document.getElementById("number2")
-const times = document.getElementById("timer")
-let number3 =document.getElementById("number3")
-const button = document.getElementById("buttons")
-let operator;
-score = 0
+// Iteration 2: Generating two random numbers (0 to 100)
+const num1 = Math.floor(Math.random() * 101); // Generating random number 1 (between 0 and 100)
+const num2 = Math.floor(Math.random() * 101); // Generating random number 2 (between 0 and 100)
 
 // Iteration 3: Creating variables required to make the game functional
+let score = 0;
+let time = 21;
 
-function gameover(){
-    location.href = "./gameover.html"
-    localStorage.setItem("score",score)
+// Function to handle game over
+function gameover() {
+    location.href = "./gameover.html";
+    localStorage.setItem("score", score);
 }
 
 // Iteration 4: Creating a variable for number 3 and a variable for storing the html element with the Id "number3"
+let number3 = num1 + num2; // Calculating number3 as the sum of num1 and num2
 
-const plus = document.getElementById("plus")
-const minus = document.getElementById("minus")
-const multi = document.getElementById("mul")
-const div = document.getElementById("divide")
-const mod = document.getElementById("modulus")
-
-
-function displayNumbers() {
-    let num1 = randomNumbers();
-    let num2 = randomNumbers();
-    number1.innerText = num1;
-    number2.innerText = num2;
-    let num3 = updateNumber(num1,num2)
-    number3.innerText = num3
+// Iteration 5: Creating a randomize function to make the game functional
+function randomNumbers() {
+    return Math.floor(Math.random() * 101); // Generating random number between 0 and 100
 }
-
-displayNumbers();
-
-
-// Iteration 5: Creating a randomise function to make the game functional
-
-function randomNumbers(){
-    return Math.floor(Math.random()*100)
-
-}
-button.addEventListener('click', (e)=>{
-    compare(e.target.id)
-})
-
 
 // Iteration 6: Making the Operators (button) functional
+function updateNumber(num1, num2) {
+    const operators = ["+", "-", "*", "/", "%"];
+    const randomIndex = Math.floor(Math.random() * operators.length);
+    const operator = operators[randomIndex];
 
-function updateNumber(num1,num2) {
-    let ans = 0
-    let operators = ["+","-","X","/","%"]
-    let x = Math.floor(Math.random()*5)
-    operator = operators[x]
-    console.log(operator)
-    if(operator == "+") ans = num1+num2
-    else if(operator == "-") ans = num1-num2
-    else if(operator == "X") ans = num1*num2
-    else if(operator == "/") ans = Math.floor(num1/num2)
-    else if(operator == "%") ans = num1%num2
-    return ans
+    let ans;
+    switch (operator) {
+        case "+":
+            ans = num1 + num2;
+            break;
+        case "-":
+            ans = num1 - num2;
+            break;
+        case "*":
+            ans = num1 * num2;
+            break;
+        case "/":
+            ans = Math.floor(num1 / num2);
+            break;
+        case "%":
+            ans = num1 % num2;
+            break;
+    }
+    return ans;
 }
 
-function compare(i){
-    if(i == "plus" && operator == "+" || 
-    i =="minus" && operator =="-" ||
-    i == "mul" && operator == "X" ||
-    i == "divide" && operator =="/"||
-    i == "modulus" && operator == "%"){
-        displayNumbers()
-        score++
-        localStorage.setItem("score", 100)
-        time = 21
-
-    }else{
-        gameover()
+function compare(operatorClicked) {
+    if (operatorClicked === operator) {
+        score++;
+        localStorage.setItem("score", score);
+        displayNumbers();
+        time = 21;
+    } else {
+        gameover();
     }
 }
-
 
 // Iteration 7: Making Timer functional
-
-let time = 21
-function timer(){
-    if (time<=1){
-        gameover()
+function timer() {
+    if (time <= 0) {
+        gameover();
+    } else {
+        time--;
+        document.getElementById("timer").innerText = time;
     }
-    time--
-    times.innerText = time
 }
-setInterval(timer, 1000)
+
+setInterval(timer, 1000); // Starting the timer
+
+function displayNumbers() {
+    const num1 = randomNumbers();
+    const num2 = randomNumbers();
+    document.getElementById("number1").innerText = num1;
+    document.getElementById("number2").innerText = num2;
+    operator = updateNumber(num1, num2);
+    document.getElementById("number3").innerText = operator;
+}
+
+// Adding event listeners to operator buttons
+document.getElementById("plus").addEventListener('click', () => compare("+"));
+document.getElementById("minus").addEventListener('click', () => compare("-"));
+document.getElementById("mul").addEventListener('click', () => compare("*"));
+document.getElementById("divide").addEventListener('click', () => compare("/"));
+document.getElementById("modulus").addEventListener('click', () => compare("%"));
+
+// Display initial numbers
+displayNumbers();
